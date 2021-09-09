@@ -14,3 +14,5 @@ class UnauthenticatedFailure extends Failure {}
 class NotFoundFailure extends Failure {}
 
 class UnknownFailure extends Failure {}
+
+class NoInternetFailure extends Failure {}
