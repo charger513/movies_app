@@ -195,4 +195,113 @@ void main() {
       });
     });
   });
+
+  group("GetPopular", () {
+    test(
+      'should check if the device is online',
+      () async {
+        // arrange
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(mockMoviesRemoteDataSourceInterface.getPopular(
+                page: anyNamed("page")))
+            .thenAnswer((_) async => tMovieCollectionModel);
+        // act
+        moviesRepository.getPopular();
+        //assert
+        verify(mockNetworkInfo.isConnected);
+      },
+    );
+
+    runTestOnline(() {
+      test(
+        'should return remote data when the call to remote data source is sucessful',
+        () async {
+          // arrange
+          when(mockMoviesRemoteDataSourceInterface.getPopular(
+                  page: anyNamed('page')))
+              .thenAnswer((_) async => tMovieCollectionModel);
+          // act
+          final result = await moviesRepository.getPopular();
+          // assert
+          verify(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+          expect(result, const Right(tMovieCollectionModel));
+        },
+      );
+
+      test(
+        'should return unauthenticated failure when the call to remote data source is unsucessful',
+        () async {
+          // arrange
+          when(mockMoviesRemoteDataSourceInterface.getPopular(
+                  page: anyNamed('page')))
+              .thenThrow(UnauthenticatedException(''));
+          // act
+          final result = await moviesRepository.getPopular();
+          // assert
+          verify(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+          verifyNoMoreInteractions(mockMoviesRemoteDataSourceInterface);
+          expect(result, Left(UnauthenticatedFailure()));
+        },
+      );
+
+      test(
+        'should return not found failure when the call to remote data source is unsucessful',
+        () async {
+          // arrange
+          when(mockMoviesRemoteDataSourceInterface.getPopular(
+                  page: anyNamed('page')))
+              .thenThrow(NotFoundException(''));
+          // act
+          final result = await moviesRepository.getPopular();
+          // assert
+          verify(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+          verifyNoMoreInteractions(mockMoviesRemoteDataSourceInterface);
+          expect(result, Left(NotFoundFailure()));
+        },
+      );
+
+      test(
+        'should return server failure when the call to remote data source is unsucessful',
+        () async {
+          // arrange
+          when(mockMoviesRemoteDataSourceInterface.getPopular(
+                  page: anyNamed('page')))
+              .thenThrow(ServerException());
+          // act
+          final result = await moviesRepository.getPopular();
+          // assert
+          verify(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+          verifyNoMoreInteractions(mockMoviesRemoteDataSourceInterface);
+          expect(result, Left(ServerFailure()));
+        },
+      );
+
+      test(
+        'should return unknown failure when the call to remote data source is unsucessful',
+        () async {
+          // arrange
+          when(mockMoviesRemoteDataSourceInterface.getPopular(
+                  page: anyNamed('page')))
+              .thenThrow(UnknownException());
+          // act
+          final result = await moviesRepository.getPopular();
+          // assert
+          verify(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+          verifyNoMoreInteractions(mockMoviesRemoteDataSourceInterface);
+          expect(result, Left(UnknownFailure()));
+        },
+      );
+    });
+
+    runTestOffline(() {
+      test(
+          "should return no internet failure when there is not internet connection",
+          () async {
+        final result = await moviesRepository.getPopular();
+        verifyNever(mockMoviesRemoteDataSourceInterface.getPopular(page: 1));
+        verifyNoMoreInteractions(mockMoviesRemoteDataSourceInterface);
+        expect(result, Left(NoInternetFailure()));
+      });
+    });
+  });
 }

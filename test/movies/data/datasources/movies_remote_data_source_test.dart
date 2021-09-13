@@ -110,4 +110,71 @@ void main() {
       },
     );
   });
+
+  group("getPopular", () {
+    test(
+      "should perform a GET request on a URL with number being the endpoint and with application/json header",
+      () {
+        // arrange
+        setUpMockClientSuccess200(mockClient);
+        // act
+        datasource.getPopular();
+        // assert
+        final uri = Uri.parse(
+            'https://api.themoviedb.org/3/movie/popular?api_key=${datasource.token}&language=${datasource.lang}&page=1');
+        verify(mockClient.get(
+          uri,
+          headers: {'Content-Type': 'application/json'},
+        ));
+      },
+    );
+
+    test(
+      "should return MovieCollectionModel when de response code is 200 (success)",
+      () async {
+        // arrange
+        setUpMockClientSuccess200(mockClient);
+        // act
+        final result = await datasource.getPopular();
+        // assert
+        expect(result, tMovieCollectionModel);
+      },
+    );
+
+    test(
+      "should throw UnauthenticatedException when response code is 401",
+      () async {
+        // arrange
+        setUpMockClientFailure401(mockClient);
+        // act
+        final call = datasource.getPopular;
+        // assert
+        expect(() => call(), throwsA(isA<UnauthenticatedException>()));
+      },
+    );
+
+    test(
+      "should throw NotFoundException when response code is 404",
+      () async {
+        // arrange
+        setUpMockClientFailure404(mockClient);
+        // act
+        final call = datasource.getPopular;
+        // assert
+        expect(() => call(), throwsA(isA<NotFoundException>()));
+      },
+    );
+
+    test(
+      "should throw ServerException when response code is 500",
+      () async {
+        // arrange
+        setUpMockClientFailure500(mockClient);
+        // act
+        final call = datasource.getPopular;
+        // assert
+        expect(() => call(), throwsA(isA<ServerException>()));
+      },
+    );
+  });
 }

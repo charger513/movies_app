@@ -35,4 +35,25 @@ class MoviesRepository implements MoviesRepositoryInterface {
 
     return Left(NoInternetFailure());
   }
+
+  @override
+  Future<Either<Failure, MovieCollection>> getPopular({int page = 1}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final movies =
+            await moviesRemoteDataSourceInterface.getPopular(page: page);
+        return Right(movies);
+      } on UnauthenticatedException {
+        return Left(UnauthenticatedFailure());
+      } on NotFoundException {
+        return Left(NotFoundFailure());
+      } on ServerException {
+        return Left(ServerFailure());
+      } catch (e) {
+        return Left(UnknownFailure());
+      }
+    }
+
+    return Left(NoInternetFailure());
+  }
 }
