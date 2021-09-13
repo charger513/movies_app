@@ -20,6 +20,7 @@ class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
 
   @override
   Future<MovieCollectionModel> getPlayingNow({int page = 1}) async {
+    print('page: $page');
     final uri = Uri.parse(
         'https://api.themoviedb.org/3/movie/now_playing?api_key=$token&language=$lang&page=$page');
     final headers = {'Content-Type': 'application/json'};

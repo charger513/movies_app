@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:movies_app/movies/domain/entities/movie.dart';
 import 'package:movies_app/movies/domain/usecases/get_now_playing.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'playing_now_event.dart';
 part 'playing_now_state.dart';
@@ -14,6 +15,17 @@ class PlayingNowBloc extends Bloc<PlayingNowEvent, PlayingNowState> {
   PlayingNowBloc({
     required this.getNowPlaying,
   }) : super(const PlayingNowState());
+
+  @override
+  Stream<Transition<PlayingNowEvent, PlayingNowState>> transformEvents(
+    Stream<PlayingNowEvent> events,
+    TransitionFunction<PlayingNowEvent, PlayingNowState> transitionFn,
+  ) {
+    return super.transformEvents(
+      events.throttleTime(const Duration(milliseconds: 500)),
+      transitionFn,
+    );
+  }
 
   @override
   Stream<PlayingNowState> mapEventToState(
