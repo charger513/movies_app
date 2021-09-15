@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -6,20 +7,19 @@ import 'package:movies_app/core/enums/movie_status.dart';
 import 'package:movies_app/core/error/failures.dart';
 import 'package:movies_app/movies/domain/entities/movie.dart';
 import 'package:movies_app/movies/domain/entities/movie_collection.dart';
-import 'package:movies_app/movies/domain/usecases/get_now_playing.dart';
-import 'package:movies_app/movies/presentation/bloc/playing_now/playing_now_bloc.dart';
-import 'package:bloc_test/bloc_test.dart';
+import 'package:movies_app/movies/domain/usecases/get_popular.dart';
+import 'package:movies_app/movies/presentation/bloc/popular/popular_bloc.dart';
 
-import 'playing_now_bloc_test.mocks.dart';
+import 'popular_bloc_test.mocks.dart';
 
-@GenerateMocks([GetNowPlaying])
+@GenerateMocks([GetPopular])
 void main() {
-  late MockGetNowPlaying mockGetNowPlaying;
-  late PlayingNowBloc bloc;
+  late MockGetPopular mockGetPopular;
+  late PopularBloc bloc;
 
   setUp(() {
-    mockGetNowPlaying = MockGetNowPlaying();
-    bloc = PlayingNowBloc(getNowPlaying: mockGetNowPlaying);
+    mockGetPopular = MockGetPopular();
+    bloc = PopularBloc(getPopular: mockGetPopular);
   });
 
   const tMovieCollection = MovieCollection(
@@ -83,33 +83,34 @@ void main() {
     totalResults: 1,
   );
 
-  group("PlayingNowBloc", () {
-    test("should PlayingNowState the initial state", () {
-      expect(bloc.state, const PlayingNowState());
+  group("GetPopularBloc", () {
+    test("should PopularEmpty the initial state", () {
+      expect(bloc.state, PopularEmpty());
     });
 
-    blocTest(
+    blocTest<PopularBloc, PopularState>(
       "emits nothing when movies has reached maximum amount",
       build: () => bloc,
-      seed: () => const PlayingNowState(hasReachedMax: true),
-      act: (_) => bloc.add(PlayingNowMoviesFetched()),
+      seed: () => const PopularLoaded(hasReachedMax: true),
+      act: (_) => bloc.add(PopularMoviesFetched()),
       expect: () => [],
       verify: (_) {
-        verifyNever(mockGetNowPlaying());
+        verifyNever(mockGetPopular());
       },
     );
 
     blocTest(
-      "emits successful status when usecase fetches initial movies",
+      "emits [PopularLoading, PopularLoaded] and success status when usecase fetches initial movies",
       build: () {
-        when(mockGetNowPlaying(page: anyNamed('page')))
+        when(mockGetPopular(page: anyNamed('page')))
             .thenAnswer((_) async => const Right(tMovieCollection));
 
         return bloc;
       },
-      act: (_) => bloc.add(PlayingNowMoviesFetched()),
+      act: (_) => bloc.add(PopularMoviesFetched()),
       expect: () => [
-        PlayingNowState(
+        PopularLoading(),
+        PopularLoaded(
           status: MovieStatus.success,
           movies: tMovieCollection.movies,
           hasReachedMax: false,
@@ -118,74 +119,93 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(mockGetNowPlaying(page: 1));
+        verify(mockGetPopular(page: 1));
       },
     );
 
     blocTest(
-      "emits failure status when usecase returns failure",
+      "emits [PopularLoading, PopularError] when usecase returns failure when state is [PopularEmpty]",
       build: () {
-        when(mockGetNowPlaying(page: anyNamed('page')))
+        when(mockGetPopular(page: anyNamed('page')))
             .thenAnswer((_) async => Left(ServerFailure()));
 
         return bloc;
       },
-      act: (_) => bloc.add(PlayingNowMoviesFetched()),
+      act: (_) => bloc.add(PopularMoviesFetched()),
       expect: () => [
-        const PlayingNowState(
-          status: MovieStatus.failure,
-          hasReachedMax: false,
-          page: 1,
-          totalPages: 1,
-        ),
+        PopularLoading(),
+        const PopularError('Error'),
       ],
       verify: (_) {
-        verify(mockGetNowPlaying(page: 1));
+        verify(mockGetPopular(page: 1));
       },
     );
 
-    blocTest(
-      "emits successful status and reaches max movies when 0 additional movies are fetched",
+    blocTest<PopularBloc, PopularState>(
+      "emits status failure when usecase returns failure when state is [PopularLoaded]",
       build: () {
-        when(mockGetNowPlaying(page: anyNamed('page')))
+        when(mockGetPopular(page: anyNamed('page')))
+            .thenAnswer((_) async => Left(ServerFailure()));
+
+        return bloc;
+      },
+      seed: () => const PopularLoaded(totalPages: 2),
+      act: (_) => bloc.add(PopularMoviesFetched()),
+      expect: () => [
+        const PopularLoaded(
+          status: MovieStatus.failure,
+          movies: [],
+          page: 1,
+          totalPages: 2,
+        ),
+      ],
+      verify: (_) {
+        verify(mockGetPopular(page: 2));
+      },
+    );
+
+    blocTest<PopularBloc, PopularState>(
+      "emits successful status and reaches max movies when 0 additional movies are fetched in [PopularLoaded]",
+      build: () {
+        when(mockGetPopular(page: anyNamed('page')))
             .thenAnswer((_) async => const Right(tMovieCollectionEmpty));
         return bloc;
       },
-      seed: () => PlayingNowState(
+      seed: () => PopularLoaded(
         status: MovieStatus.success,
         movies: tMovieCollection.movies,
         page: 1,
         totalPages: 1,
       ),
-      act: (_) => bloc.add(PlayingNowMoviesFetched()),
+      act: (_) => bloc.add(PopularMoviesFetched()),
       expect: () => [
-        PlayingNowState(
+        PopularLoaded(
           status: MovieStatus.success,
           movies: tMovieCollection.movies,
           hasReachedMax: true,
         ),
       ],
       verify: (_) {
-        verifyNever(mockGetNowPlaying());
+        verifyNever(mockGetPopular());
       },
     );
 
-    blocTest(
-      "emits successful status and doesn't reach max movies when additional movies are fetched",
+    blocTest<PopularBloc, PopularState>(
+      "emits successful status and doesn't reach max movies when additional movies are fetched in [PopularLoaded]",
       build: () {
-        when(mockGetNowPlaying(page: anyNamed('page')))
+        when(mockGetPopular(page: anyNamed('page')))
             .thenAnswer((_) async => const Right(tMovieCollectionPage2));
         return bloc;
       },
-      seed: () => PlayingNowState(
+      seed: () => PopularLoaded(
         status: MovieStatus.success,
         movies: tMovieCollection.movies,
         page: 1,
         totalPages: 2,
       ),
-      act: (_) => bloc.add(PlayingNowMoviesFetched()),
+      act: (_) => bloc.add(PopularMoviesFetched()),
       expect: () => [
-        PlayingNowState(
+        PopularLoaded(
           status: MovieStatus.success,
           movies: [...tMovieCollection.movies, ...tMovieCollectionPage2.movies],
           hasReachedMax: false,

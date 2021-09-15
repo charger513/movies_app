@@ -105,7 +105,7 @@ void main() {
 
     runTestOnline(() {
       test(
-        'should return remote data when the call to remote data source is sucessful',
+        'should return remote data when the call to remote data source is successful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPlayingNow(
@@ -120,7 +120,7 @@ void main() {
       );
 
       test(
-        'should return unauthenticated failure when the call to remote data source is unsucessful',
+        'should return unauthenticated failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPlayingNow(
@@ -136,7 +136,7 @@ void main() {
       );
 
       test(
-        'should return not found failure when the call to remote data source is unsucessful',
+        'should return not found failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPlayingNow(
@@ -152,7 +152,7 @@ void main() {
       );
 
       test(
-        'should return server failure when the call to remote data source is unsucessful',
+        'should return server failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPlayingNow(
@@ -168,7 +168,7 @@ void main() {
       );
 
       test(
-        'should return unknown failure when the call to remote data source is unsucessful',
+        'should return unknown failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPlayingNow(
@@ -214,7 +214,7 @@ void main() {
 
     runTestOnline(() {
       test(
-        'should return remote data when the call to remote data source is sucessful',
+        'should return remote data when the call to remote data source is successful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPopular(
@@ -229,7 +229,7 @@ void main() {
       );
 
       test(
-        'should return unauthenticated failure when the call to remote data source is unsucessful',
+        'should return unauthenticated failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPopular(
@@ -245,7 +245,7 @@ void main() {
       );
 
       test(
-        'should return not found failure when the call to remote data source is unsucessful',
+        'should return not found failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPopular(
@@ -261,7 +261,7 @@ void main() {
       );
 
       test(
-        'should return server failure when the call to remote data source is unsucessful',
+        'should return server failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPopular(
@@ -277,7 +277,7 @@ void main() {
       );
 
       test(
-        'should return unknown failure when the call to remote data source is unsucessful',
+        'should return unknown failure when the call to remote data source is unsuccessful',
         () async {
           // arrange
           when(mockMoviesRemoteDataSourceInterface.getPopular(

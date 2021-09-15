@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies_app/core/enums/movie_status.dart';
 import 'package:movies_app/movies/presentation/bloc/playing_now/playing_now_bloc.dart';
 import 'package:movies_app/movies/presentation/widgets/movie_list_item.dart';
 

@@ -1,13 +1,24 @@
-part of 'playing_now_bloc.dart';
+part of 'popular_bloc.dart';
 
-class PlayingNowState extends Equatable {
+abstract class PopularState extends Equatable {
+  const PopularState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class PopularEmpty extends PopularState {}
+
+class PopularLoading extends PopularState {}
+
+class PopularLoaded extends PopularState {
   final MovieStatus status;
   final List<Movie> movies;
   final bool hasReachedMax;
   final int page;
   final int totalPages;
 
-  const PlayingNowState({
+  const PopularLoaded({
     this.status = MovieStatus.initial,
     this.movies = const <Movie>[],
     this.hasReachedMax = false,
@@ -15,14 +26,14 @@ class PlayingNowState extends Equatable {
     this.totalPages = 1,
   });
 
-  PlayingNowState copyWith({
+  PopularLoaded copyWith({
     MovieStatus? status,
     List<Movie>? movies,
     bool? hasReachedMax,
     int? page,
     int? totalPages,
   }) =>
-      PlayingNowState(
+      PopularLoaded(
         status: status ?? this.status,
         movies: movies ?? this.movies,
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -32,4 +43,10 @@ class PlayingNowState extends Equatable {
 
   @override
   List<Object> get props => [status, movies, hasReachedMax, page, totalPages];
+}
+
+class PopularError extends PopularState {
+  final String message;
+
+  const PopularError(this.message);
 }
