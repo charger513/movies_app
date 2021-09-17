@@ -5,4 +5,5 @@ import 'package:movies_app/movies/domain/entities/movie_collection.dart';
 abstract class MoviesRepositoryInterface {
   Future<Either<Failure, MovieCollection>> getNowPlaying({int page});
   Future<Either<Failure, MovieCollection>> getPopular({int page});
+  Future<Either<Failure, MovieCollection>> getUpcoming({int page});
 }

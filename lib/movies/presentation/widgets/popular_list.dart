@@ -79,6 +79,10 @@ class _PopularListState extends State<PopularList> {
               ),
             ],
           );
+        } else if (state is PopularError) {
+          return Center(
+            child: Text(state.message),
+          );
         }
 
         return const Center(child: CircularProgressIndicator());

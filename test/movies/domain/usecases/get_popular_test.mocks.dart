@@ -47,5 +47,13 @@ class MockMoviesRepositoryInterface extends _i1.Mock
                       _FakeEither_0<_i5.Failure, _i6.MovieCollection>()))
           as _i4.Future<_i2.Either<_i5.Failure, _i6.MovieCollection>>);
   @override
+  _i4.Future<_i2.Either<_i5.Failure, _i6.MovieCollection>> getUpcoming(
+          {int? page}) =>
+      (super.noSuchMethod(Invocation.method(#getUpcoming, [], {#page: page}),
+              returnValue:
+                  Future<_i2.Either<_i5.Failure, _i6.MovieCollection>>.value(
+                      _FakeEither_0<_i5.Failure, _i6.MovieCollection>()))
+          as _i4.Future<_i2.Either<_i5.Failure, _i6.MovieCollection>>);
+  @override
   String toString() => super.toString();
 }

@@ -7,8 +7,10 @@ import 'package:movies_app/movies/data/repositories/movies_repository.dart';
 import 'package:movies_app/movies/domain/repositories/movies_repository_interface.dart';
 import 'package:movies_app/movies/domain/usecases/get_now_playing.dart';
 import 'package:movies_app/movies/domain/usecases/get_popular.dart';
+import 'package:movies_app/movies/domain/usecases/get_upcoming.dart';
 import 'package:movies_app/movies/presentation/bloc/playing_now/playing_now_bloc.dart';
 import 'package:movies_app/movies/presentation/bloc/popular/popular_bloc.dart';
+import 'package:movies_app/movies/presentation/bloc/upcoming/upcoming_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -17,10 +19,12 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => PlayingNowBloc(getNowPlaying: sl()));
   sl.registerFactory(() => PopularBloc(getPopular: sl()));
+  sl.registerFactory(() => UpcomingBloc(getUpcoming: sl()));
 
   // usecases
   sl.registerLazySingleton(() => GetNowPlaying(sl()));
   sl.registerLazySingleton(() => GetPopular(sl()));
+  sl.registerLazySingleton(() => GetUpcoming(sl()));
 
   // repositories
   sl.registerLazySingleton<MoviesRepositoryInterface>(() => MoviesRepository(

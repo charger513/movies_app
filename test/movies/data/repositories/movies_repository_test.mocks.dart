@@ -44,6 +44,12 @@ class MockMoviesRemoteDataSourceInterface extends _i1.Mock
                   _FakeMovieCollectionModel_0()))
           as _i4.Future<_i2.MovieCollectionModel>);
   @override
+  _i4.Future<_i2.MovieCollectionModel> getUpcoming({int? page = 1}) =>
+      (super.noSuchMethod(Invocation.method(#getUpcoming, [], {#page: page}),
+              returnValue: Future<_i2.MovieCollectionModel>.value(
+                  _FakeMovieCollectionModel_0()))
+          as _i4.Future<_i2.MovieCollectionModel>);
+  @override
   String toString() => super.toString();
 }
 
