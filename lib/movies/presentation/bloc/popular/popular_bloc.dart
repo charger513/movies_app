@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:movies_app/core/enums/movie_status.dart';
 import 'package:movies_app/movies/domain/entities/movie.dart';
 import 'package:movies_app/movies/domain/usecases/get_popular.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'popular_event.dart';
 part 'popular_state.dart';
@@ -12,6 +13,17 @@ part 'popular_state.dart';
 class PopularBloc extends Bloc<PopularEvent, PopularState> {
   final GetPopular getPopular;
   PopularBloc({required this.getPopular}) : super(PopularEmpty());
+
+  @override
+  Stream<Transition<PopularEvent, PopularState>> transformEvents(
+    Stream<PopularEvent> events,
+    TransitionFunction<PopularEvent, PopularState> transitionFn,
+  ) {
+    return super.transformEvents(
+      events.throttleTime(const Duration(milliseconds: 500)),
+      transitionFn,
+    );
+  }
 
   @override
   Stream<PopularState> mapEventToState(

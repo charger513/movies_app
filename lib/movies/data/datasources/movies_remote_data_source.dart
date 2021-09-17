@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:movies_app/core/error/exceptions.dart';
@@ -15,7 +16,7 @@ abstract class MoviesRemoteDataSourceInterface {
 
   /// Calls the https://api.themoviedb.org/3/movie/popular endpoint.
   ///
-  /// Throws a [UnauthenticatedException] for error code 401.
+  /// Throws a [UnauthenticatedException] for error code 401
   /// Throws a [NotFoundException] for error code 404.
   /// Throws a [ServerException] for error code 500.
   /// Throws a [UnknownException] for other error codes.
@@ -25,14 +26,15 @@ abstract class MoviesRemoteDataSourceInterface {
 class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
   final http.Client client;
   final token = '0087e2ee52ae1bc30ababdd80751dd3b';
-  final lang = 'en_US';
+  final lang = 'en-US';
+  final region = '';
 
   MoviesRemoteDataSource(this.client);
 
   @override
   Future<MovieCollectionModel> getPlayingNow({int page = 1}) async {
     final uri = Uri.parse(
-        'https://api.themoviedb.org/3/movie/now_playing?api_key=$token&language=$lang&page=$page');
+        'https://api.themoviedb.org/3/movie/now_playing?api_key=$token&language=$lang&region=$region&page=$page');
     final headers = {'Content-Type': 'application/json'};
 
     final response = await client.get(uri, headers: headers);
@@ -52,8 +54,9 @@ class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
 
   @override
   Future<MovieCollectionModel> getPopular({int page = 1}) async {
+    log(page.toString());
     final uri = Uri.parse(
-        'https://api.themoviedb.org/3/movie/popular?api_key=$token&language=$lang&page=$page');
+        'https://api.themoviedb.org/3/movie/popular?api_key=$token&language=$lang&region=$region&page=$page');
     final headers = {'Content-Type': 'application/json'};
 
     final response = await client.get(uri, headers: headers);

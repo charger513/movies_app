@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/movies/presentation/bloc/playing_now/playing_now_bloc.dart';
 import 'package:movies_app/movies/presentation/widgets/playing_now_list.dart';
+import 'package:movies_app/movies/presentation/widgets/popular_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,7 +24,14 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Movies'),
       ),
-      body: const PlayingNowList(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: const [
+            SizedBox(height: 250, child: PlayingNowList()),
+            SizedBox(height: 250, child: PopularList()),
+          ],
+        ),
+      ),
     );
   }
 }
