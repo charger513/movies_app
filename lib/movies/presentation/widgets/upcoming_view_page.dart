@@ -53,7 +53,10 @@ class _UpcomingViewPageState extends State<UpcomingViewPage> {
               final movie = state.movies[index];
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
-                margin: EdgeInsets.only(top: index == currentPage ? 0 : 30),
+                padding: EdgeInsets.only(
+                  top: index == currentPage ? 0 : 15,
+                  bottom: index == currentPage ? 0 : 15,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ClipRRect(
