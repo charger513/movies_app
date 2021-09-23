@@ -21,7 +21,7 @@ class _UpcomingViewPageState extends State<UpcomingViewPage> {
     super.initState();
     BlocProvider.of<UpcomingBloc>(context).add(UpcomingMoviesFetched());
     _pageController.addListener(() {
-      log(_pageController.page.toString());
+      // log(_pageController.page.toString());
       int pos = _pageController.page?.round() ?? 0;
       if (currentPage != pos) {
         setState(() {

@@ -56,8 +56,10 @@ class MovieListItem extends StatelessWidget {
               const Icon(
                 Icons.star,
                 size: 15,
+                color: Colors.yellow,
               ),
-              Text(movie.voteAverage.toString()),
+              Text(movie.voteAverage.toString(),
+                  style: const TextStyle(color: Colors.yellow)),
             ],
           ),
         ],

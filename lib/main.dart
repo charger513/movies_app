@@ -21,9 +21,13 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => di.sl<PopularBloc>()),
         BlocProvider(create: (_) => di.sl<UpcomingBloc>()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         title: 'Movies App',
-        home: HomePage(),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF141A31),
+        ),
+        home: const HomePage(),
       ),
     );
   }
