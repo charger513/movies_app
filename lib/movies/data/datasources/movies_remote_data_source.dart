@@ -41,6 +41,7 @@ class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
 
   @override
   Future<MovieCollectionModel> getPlayingNow({int page = 1}) async {
+    // log('playing now page: ${page.toString()}');
     final uri = Uri.parse(
         'https://api.themoviedb.org/3/movie/now_playing?api_key=$token&language=$lang&region=$region&page=$page');
     final headers = {'Content-Type': 'application/json'};
@@ -62,7 +63,7 @@ class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
 
   @override
   Future<MovieCollectionModel> getPopular({int page = 1}) async {
-    log(page.toString());
+    // log('popular page: ${page.toString()}');
     final uri = Uri.parse(
         'https://api.themoviedb.org/3/movie/popular?api_key=$token&language=$lang&region=$region&page=$page');
     final headers = {'Content-Type': 'application/json'};
@@ -84,6 +85,7 @@ class MoviesRemoteDataSource implements MoviesRemoteDataSourceInterface {
 
   @override
   Future<MovieCollectionModel> getUpcoming({int page = 1}) async {
+    // log('upcoming page: ${page.toString()}');
     final uri = Uri.parse(
         'https://api.themoviedb.org/3/movie/upcoming?api_key=$token&language=$lang&region=$region&page=$page');
     final headers = {'Content-Type': 'application/json'};

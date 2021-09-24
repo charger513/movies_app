@@ -15,65 +15,73 @@ class PlayingNowBloc extends Bloc<PlayingNowEvent, PlayingNowState> {
 
   PlayingNowBloc({
     required this.getNowPlaying,
-  }) : super(const PlayingNowState());
-
-  @override
-  Stream<Transition<PlayingNowEvent, PlayingNowState>> transformEvents(
-    Stream<PlayingNowEvent> events,
-    TransitionFunction<PlayingNowEvent, PlayingNowState> transitionFn,
-  ) {
-    return super.transformEvents(
-      events.throttleTime(const Duration(milliseconds: 500)),
-      transitionFn,
+  }) : super(const PlayingNowState()) {
+    on<PlayingNowMoviesFetched>(
+      _onPlayingNowMoviesFetched,
+      transformer: throttleTime(const Duration(
+        milliseconds: 300,
+      )),
     );
   }
 
-  @override
-  Stream<PlayingNowState> mapEventToState(
-    PlayingNowEvent event,
-  ) async* {
-    if (event is PlayingNowMoviesFetched) {
-      if (state.hasReachedMax) {
-        yield state;
+  // @override
+  // Stream<Transition<PlayingNowEvent, PlayingNowState>> transformEvents(
+  //   Stream<PlayingNowEvent> events,
+  //   TransitionFunction<PlayingNowEvent, PlayingNowState> transitionFn,
+  // ) {
+  //   return super.transformEvents(
+  //     events.throttleTime(const Duration(milliseconds: 500)),
+  //     transitionFn,
+  //   );
+  // }
+
+  EventTransformer<T> throttleTime<T>(Duration duration) {
+    return (events, mapper) => events.throttleTime(duration).flatMap(mapper);
+  }
+
+  Future<void> _onPlayingNowMoviesFetched(
+    PlayingNowMoviesFetched event,
+    Emitter<PlayingNowState> emit,
+  ) async {
+    if (state.hasReachedMax) {
+      emit(state);
+    } else {
+      if (state.status == MovieStatus.initial) {
+        final failureOrMovieCollection = await getNowPlaying();
+        failureOrMovieCollection.fold(
+          (failure) {
+            emit(state.copyWith(status: MovieStatus.failure));
+          },
+          (movieCollection) {
+            emit(state.copyWith(
+              status: MovieStatus.success,
+              movies: movieCollection.movies,
+              hasReachedMax: false,
+              page: movieCollection.page,
+              totalPages: movieCollection.totalPages,
+            ));
+          },
+        );
       } else {
-        if (state.status == MovieStatus.initial) {
-          final failureOrMovieCollection = await getNowPlaying();
-          yield* failureOrMovieCollection.fold(
-            (failure) async* {
-              yield state.copyWith(status: MovieStatus.failure);
+        final nextPage = state.page + 1;
+        if (nextPage > state.totalPages) {
+          emit(state.copyWith(hasReachedMax: true));
+        } else {
+          final failureOrMovieCollection = await getNowPlaying(page: nextPage);
+          failureOrMovieCollection.fold(
+            (failure) {
+              emit(state.copyWith(status: MovieStatus.failure));
             },
-            (movieCollection) async* {
-              yield state.copyWith(
+            (movieCollection) {
+              emit(state.copyWith(
                 status: MovieStatus.success,
-                movies: movieCollection.movies,
+                movies: List.of(state.movies)..addAll(movieCollection.movies),
                 hasReachedMax: false,
                 page: movieCollection.page,
                 totalPages: movieCollection.totalPages,
-              );
+              ));
             },
           );
-        } else {
-          final nextPage = state.page + 1;
-          if (nextPage > state.totalPages) {
-            yield state.copyWith(hasReachedMax: true);
-          } else {
-            final failureOrMovieCollection =
-                await getNowPlaying(page: nextPage);
-            yield* failureOrMovieCollection.fold(
-              (failure) async* {
-                yield state.copyWith(status: MovieStatus.failure);
-              },
-              (movieCollection) async* {
-                yield state.copyWith(
-                  status: MovieStatus.success,
-                  movies: List.of(state.movies)..addAll(movieCollection.movies),
-                  hasReachedMax: false,
-                  page: movieCollection.page,
-                  totalPages: movieCollection.totalPages,
-                );
-              },
-            );
-          }
         }
       }
     }
