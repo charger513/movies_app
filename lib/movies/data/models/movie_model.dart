@@ -5,7 +5,7 @@ class MovieModel extends Movie {
     required String? posterPath,
     required bool adult,
     required String overview,
-    required String releaseDate,
+    required String? releaseDate,
     required List<int> genreIds,
     required int id,
     required String originalTitle,
