@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/movies/presentation/bloc/upcoming/upcoming_bloc.dart';
+import 'package:movies_app/movies/presentation/widgets/movie_details.dart';
 
 class UpcomingViewPage extends StatefulWidget {
   const UpcomingViewPage({Key? key}) : super(key: key);
@@ -61,17 +62,39 @@ class _UpcomingViewPageState extends State<UpcomingViewPage> {
                   padding: const EdgeInsets.all(10.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: movie.posterPath != null
-                        ? CachedNetworkImage(
-                            imageUrl:
-                                'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
-                            height: double.infinity,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : const Center(
-                            child: Icon(Icons.error),
+                    child: Stack(
+                      children: [
+                        movie.posterPath != null
+                            ? Hero(
+                                tag: Key('${movie.id}-upcoming'),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : const Center(
+                                child: Icon(Icons.error),
+                              ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => MovieDetails(
+                                    movie: movie,
+                                    heroTag: '${movie.id}-upcoming',
+                                  ),
+                                ),
+                              );
+                            },
                           ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );

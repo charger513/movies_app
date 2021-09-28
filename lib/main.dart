@@ -13,8 +13,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     // systemNavigationBarColor: Colors.blue, // navigation bar color
     // statusBarColor: Colors.pink, // status bar color
-    statusBarBrightness: Brightness.dark, //status bar brigtness
-    statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
+    statusBarBrightness: Brightness.dark, //status bar brigtness IOS
+    statusBarIconBrightness:
+        Brightness.light, //status barIcon Brightness ANDROID
     // systemNavigationBarDividerColor: Colors.greenAccent,//Navigation bar divider color
     // systemNavigationBarIconBrightness: Brightness.light, //navigation bar icon
   ));

@@ -73,7 +73,10 @@ class _PopularListState extends State<PopularList> {
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
-                        : MovieListItem(movie: state.movies[index]);
+                        : MovieListItem(
+                            movie: state.movies[index],
+                            category: 'Popular',
+                          );
                   },
                 ),
               ),
