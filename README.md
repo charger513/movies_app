@@ -1,4 +1,4 @@
-# Movies App
+# Flutter Movies App
 
 Example movies app using Flutter Bloc Package for state management.
 
