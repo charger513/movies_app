@@ -15,20 +15,16 @@ class UpcomingViewPage extends StatefulWidget {
 
 class _UpcomingViewPageState extends State<UpcomingViewPage> {
   final _pageController = PageController(viewportFraction: 0.7);
-  int currentPage = 0;
+  double currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<UpcomingBloc>(context).add(UpcomingMoviesFetched());
     _pageController.addListener(() {
-      // log(_pageController.page.toString());
-      int pos = _pageController.page?.round() ?? 0;
-      if (currentPage != pos) {
-        setState(() {
-          currentPage = pos;
-        });
-      }
+      setState(() {
+        currentPage = _pageController.page ?? 0;
+      });
     });
   }
 
@@ -52,14 +48,12 @@ class _UpcomingViewPageState extends State<UpcomingViewPage> {
             itemCount: state.movies.length,
             itemBuilder: (_, index) {
               final movie = state.movies[index];
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                padding: EdgeInsets.only(
-                  top: index == currentPage ? 0 : 15,
-                  bottom: index == currentPage ? 0 : 15,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+              final scaleFactor =
+                  1 - ((currentPage - index).abs() * 0.1).clamp(0.0, 1.0);
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Transform.scale(
+                  scale: scaleFactor,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Stack(
